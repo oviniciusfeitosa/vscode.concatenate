@@ -1,0 +1,44 @@
+{
+  "name": "concatenate",
+  "displayName": "ConcatenateFiles",
+  "description": "Concatenates selected files into a new document",
+  "version": "0.0.1",
+  "publisher": "oviniciusfeitosa",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/oviniciusfeitosa/vscode.concatenate.git"
+  },
+  "license": "MIT",
+  "author": "Vinicius Feitosa da Silva <oviniciusfeitosa@gmail.com>",
+  "engines": {
+    "vscode": "^1.83.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./out/extension",
+  "contributes": {
+    "commands": [
+      {
+        "command": "extension.concatenate",
+        "title": "Concatenate Selected Files"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "lint": "eslint \"src/**/*.ts\"",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/node": "^18",
+    "@types/vscode": "^1.83.1",
+    "@typescript-eslint/eslint-plugin": "^6.7.3",
+    "@typescript-eslint/parser": "^6.7.3",
+    "eslint": "^8.50.0",
+    "typescript": "^5.2.2"
+  }
+}
