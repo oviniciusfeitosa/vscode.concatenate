@@ -2,7 +2,7 @@
   "name": "concatenate",
   "displayName": "Concatenate",
   "description": "Concatenates selected files into a new document",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "publisher": "oviniciusfeitosa",
   "private": true,
   "homepage": "https://github.com/oviniciusfeitosa/vscode.concatenate.git",
