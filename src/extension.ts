@@ -1,62 +1,77 @@
 "use strict";
-
-import * as fs from 'fs';
+import * as fs from "fs";
+import * as path from "path";
 import * as vscode from "vscode";
 
 export function activate(context: vscode.ExtensionContext) {
-  const disposable = vscode.commands.registerCommand(
-    "extension.concatenate",
-    function () {
-      const selectedFiles = vscode.window.activeTextEditor?.selections;
+  const concatenateFiles = (
+    allSelections: vscode.Uri[]
+  ) => {
+    const selectedFiles = allSelections.map((value) => {
+      return value.path;
+    });
 
-      if (selectedFiles) {
-          const concatenatedContent: string[] = [];
-          selectedFiles.forEach(selection => {
-              const filePath = vscode.window.activeTextEditor?.document.uri.fsPath;
-              if (filePath) {
-                  // console.error('selectedFiles', selectedFiles);
+    const concatenatedContent: string[] = [];
 
-                  const fileContent = Buffer.from(fs.readFileSync(filePath, 'utf8')).toString();
-                  concatenatedContent.push(fileContent);
-              }
-          });
+    selectedFiles.forEach((selection) => {
+      const fileContent = Buffer.from(fs.readFileSync(selection)).toString();
+      concatenatedContent.push(`[ File: ${selection} ]`);
+      concatenatedContent.push(fileContent);
+    });
 
-          const concatenatedText = concatenatedContent.join('\n');
-          vscode.workspace.openTextDocument({ content: concatenatedText }).then((document) => {
-              vscode.window.showTextDocument(document);
-          });
-      }
-      // const editor = vscode.window.activeTextEditor;
+    return concatenatedContent.join("\n-----\n");
+  };
 
-      // if (editor) {
-      //   const document = editor.document;
-      //   const selection = editor.selection;
+  const concatenateExplorerFiles = (
+    // ...cmdArgs: [contextSelection: vscode.Uri, allSelections: vscode.Uri[]]
+    contextSelection: vscode.Uri,
+    allSelections: vscode.Uri[]
+  ) => {
+    const concatenatedContent = concatenateFiles(
+      allSelections
+    );
 
-      //   // Get the word within the selection
-      //   const word = document.getText(selection);
-      //   const reversed = word.split("").reverse().join("");
-      //   editor.edit((editBuilder) => {
-      //     editBuilder.replace(selection, reversed);
-      //   });
-      // }
-    }
-  );
+    const vscodeWebViewOutputTab = vscode.window.createWebviewPanel(
+      "text",
+      `Concatenated File`,
+      { viewColumn: vscode.ViewColumn.Active },
+      { enableScripts: true }
+    );
 
-  // Use the console to output diagnostic information (console.log) and errors (console.error)
-  // This line of code will only be executed once when your extension is activated
-  // console.log('Congratulations, your extension "concatenate" is now active!');
-	
-  // // The command has been defined in the package.json file
-  // // Now provide the implementation of the command with registerCommand
-  // // The commandId parameter must match the command field in package.json
-  // let disposable = vscode.commands.registerCommand('concatenate.helloWorld', () => {
-		// 	// The code you place here will be executed every time your command is executed
-		// 	// Display a message box to the user
-		// 	vscode.window.showInformationMessage('Hello World from Concatenate!');
-		// });
-		
-		context.subscriptions.push(disposable);
+    const uri = vscode.Uri.parse(
+      context.asAbsolutePath(path.join("out", "webview.html"))
+    );
+    const pathUri = uri.with({ scheme: "vscode-resource" });
+    const finalHtml = fs
+      .readFileSync(pathUri.fsPath, "utf8")
+      .replace("###REPLACE_CONTENT###", concatenatedContent);
+    vscodeWebViewOutputTab.webview.html = finalHtml;
+    vscode.window.showInformationMessage(`Concatenation done!`);
+  };
+
+  const concatenateExplorerFilesAsNewDocument = (
+    contextSelection: vscode.Uri,
+    allSelections: vscode.Uri[]
+  ) => {
+    const concatenatedContent = concatenateFiles(
+      allSelections
+    );
+    vscode.workspace
+      .openTextDocument({ content: concatenatedContent })
+      .then((document) => {
+        vscode.window.showTextDocument(document);
+      });
+    vscode.window.showInformationMessage(`Concatenation done!`);
+  };
+
+  context.subscriptions.push(vscode.commands.registerCommand(
+    "concatenate.explorerFiles",
+    concatenateExplorerFiles
+  ));
+  context.subscriptions.push(vscode.commands.registerCommand(
+    "concatenate.explorerFilesAsNewDocument",
+    concatenateExplorerFilesAsNewDocument
+  ));
 }
 
-// This method is called when your extension is deactivated
-// export function deactivate() {}
+export function deactivate() {}
