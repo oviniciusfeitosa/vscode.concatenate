@@ -24,3 +24,8 @@ This extension allows you to select two or more files and generate a new file in
 - The target code will be generated and displayed in new document
 
 ![Concatenate selected files](images/concatenation_2.gif)
+
+
+## References
+
+- [VSCode - Publishing Extensions](https://code.visualstudio.com/api/working-with-extensions/publishing-extension)
