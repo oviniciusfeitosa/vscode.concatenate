@@ -1,37 +1,75 @@
 {
   "name": "concatenate",
-  "displayName": "ConcatenateFiles",
+  "displayName": "Concatenate",
   "description": "Concatenates selected files into a new document",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "publisher": "oviniciusfeitosa",
   "private": true,
+  "homepage": "https://github.com/oviniciusfeitosa/vscode.concatenate.git",
+  "bugs": {
+    "url": "https://github.com/oviniciusfeitosa/vscode.concatenate/issues"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/oviniciusfeitosa/vscode.concatenate.git"
   },
   "license": "MIT",
-  "author": "Vinicius Feitosa da Silva <oviniciusfeitosa@gmail.com>",
-  "engines": {
-    "vscode": "^1.83.0"
+  "author": {
+    "name": "Vinicius Feitosa da Silva",
+    "email": "oviniciusfeitosa@gmail.com",
+    "url": "http://viniciusfeitosa.dev"
   },
+  "engines": {
+    "vscode": "^1.77.0"
+  },
+  "icon": "images/icon.png",
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "galleryBanner": {
+    "color": "beige",
+    "theme": "dark"
+  },
+  "keywords": [
+    "concatenate",
+    "concatenation",
+    "files",
+    "merge"
+  ],
+  "activationEvents": [
+  ],
   "main": "./out/extension",
   "contributes": {
     "commands": [
       {
-        "command": "extension.concatenate",
-        "title": "Concatenate Selected Files"
+        "command": "concatenate.explorerFiles",
+        "title": "Concatenate selected files"
+      },
+      {
+        "command": "concatenate.explorerFilesAsNewDocument",
+        "title": "Concatenate selected files as new document"
       }
-    ]
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "concatenate.explorerFiles",
+          "when": "explorerResourceIsFolder == false",
+          "group": "concatenate"
+        },
+        {
+          "command": "concatenate.explorerFilesAsNewDocument",
+          "when": "explorerResourceIsFolder == false",
+          "group": "concatenate"
+        }
+      ]
+    }
   },
   "scripts": {
-    "vscode:prepublish": "npm run compile",
-    "compile": "tsc -p ./",
+    "vscode:prepublish": "mkdir -p ./out/ && cp ./src/webview.html ./out/ && npm run compile",
+    "compile": "mkdir -p ./out/ && cp ./src/webview.html ./out/ && tsc -p ./",
     "lint": "eslint \"src/**/*.ts\"",
-    "watch": "tsc -watch -p ./"
+    "watch": "mkdir -p ./out/ && cp ./src/webview.html ./out/ && tsc -watch -p ./"
   },
   "devDependencies": {
     "@types/node": "^18",
